@@ -57,7 +57,6 @@ namespace UserService
                     }
                 });
 
-
             });
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IUserService, BLL.Implementations.UserService>();
