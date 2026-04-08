@@ -9,6 +9,7 @@ using PhoneService.DLL.Abstractions;
 using PhoneService.DLL.Implementations;
 using PhoneService.DLL.Models;
 using PhoneService.Middleweare;
+using Serilog;
 using System.Text;
 
 namespace PhoneService
@@ -20,6 +21,9 @@ namespace PhoneService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Host.UseSerilog((context, services, config) => config
+          .WriteTo.Console()
+          .WriteTo.File("Logs/phone_log.txt", rollingInterval: RollingInterval.Day));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
