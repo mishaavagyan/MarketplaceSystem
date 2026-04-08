@@ -24,7 +24,7 @@ namespace UserService
             // Add services to the container.
             builder.Host.UseSerilog((context, services, config) => config
            .WriteTo.Console()
-           .WriteTo.File("Logs/auth_log.txt", rollingInterval: RollingInterval.Day));
+           .WriteTo.File("Logs/user_log.txt", rollingInterval: RollingInterval.Day));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

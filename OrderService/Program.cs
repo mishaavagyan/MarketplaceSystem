@@ -10,6 +10,7 @@ using OrderService.DAL.Abstractions;
 using OrderService.DAL.Implementations;
 using OrderService.DAL.Models;
 using OrderService.Middlewares;
+using Serilog;
 using System.Text;
 
 namespace OrderService
@@ -21,6 +22,9 @@ namespace OrderService
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Host.UseSerilog((context, services, config) => config
+          .WriteTo.Console()
+          .WriteTo.File("Logs/order_log.txt", rollingInterval: RollingInterval.Day));
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
