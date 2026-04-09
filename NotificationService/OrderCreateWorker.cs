@@ -11,18 +11,20 @@ namespace NotificationService
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IEmailSender _emailSender;
+        ILogger<OrderCreateWorker> _logger;
 
-        public OrderCreateWorker(IServiceProvider serviceProvider, IEmailSender emailSender)
+        public OrderCreateWorker(IServiceProvider serviceProvider, IEmailSender emailSender, ILogger<OrderCreateWorker> logger)
         {
             _serviceProvider = serviceProvider;
             _emailSender = emailSender;
+            _logger = logger;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
             {
-                Console.WriteLine("Worker Started");
+                _logger.LogInformation("Worker OrderCreate Started");
                 var factory = new ConnectionFactory()
                 {
                     HostName = "localhost",
@@ -53,19 +55,19 @@ namespace NotificationService
                         }
                         await channel.BasicAckAsync(ea.DeliveryTag, multiple: false);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
-                        Console.WriteLine(ex.Message);
+                        _logger.LogError(ex.Message);
                     }
-                   
+
                 };
 
                 await channel.BasicConsumeAsync(queue: "order.created", autoAck: false, consumer: consumer);
-                Console.WriteLine("Worker Is Game");
+                _logger.LogInformation("Worker OrderCreate Working...");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Worker Crashed {ex.Message}");
+                _logger.LogError($"Worker OrderCreate Crashed {ex.Message}");
             }
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }
