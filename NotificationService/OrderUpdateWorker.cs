@@ -15,17 +15,20 @@ namespace NotificationService
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IEmailSender _emailSender;
+        ILogger<OrderUpdateWorker> _logger;
 
-        public OrderUpdateWorker(IServiceProvider serviceProvider, IEmailSender emailSender)
+        public OrderUpdateWorker(IServiceProvider serviceProvider, IEmailSender emailSender, ILogger<OrderUpdateWorker> logger)
         {
             _serviceProvider = serviceProvider;
             _emailSender = emailSender;
+            _logger = logger;
         }
             
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             try
             {
+                _logger.LogInformation("Worker OrderUpdate Starting.");
                 var factory = new ConnectionFactory()
                 {
                     HostName = "localhost",
@@ -56,11 +59,12 @@ namespace NotificationService
 
                 await channel.BasicConsumeAsync(queue: "order.updated", autoAck: true, consumer: consumer);
                 await Task.Delay(Timeout.Infinite, stoppingToken);
+                _logger.LogInformation("Worker OrderUpdate Working");
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Worker Crashed {ex.Message }");
+                _logger.LogError($"Worker OrderUpadate Crashed {ex.Message}");
             }
            
         }
